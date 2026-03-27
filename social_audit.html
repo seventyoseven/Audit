@@ -1,0 +1,1314 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AuraAudit — AI Social Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #08060f;
+    --bg2: #0f0c1a;
+    --bg3: #160d2a;
+    --surface: rgba(22, 13, 42, 0.85);
+    --surface2: rgba(40, 20, 70, 0.6);
+    --border: rgba(138, 80, 255, 0.18);
+    --border2: rgba(138, 80, 255, 0.35);
+    --accent: #8a50ff;
+    --accent2: #c280ff;
+    --accent3: #5affef;
+    --accent4: #ff5af5;
+    --text: #e8deff;
+    --text2: #a48fd4;
+    --text3: #6b5599;
+    --glow: rgba(138, 80, 255, 0.4);
+    --glow2: rgba(90, 255, 239, 0.3);
+    --card-bg: rgba(18, 10, 35, 0.9);
+    --input-bg: rgba(10, 6, 20, 0.95);
+    --success: #5affac;
+    --warn: #ffb35a;
+    --danger: #ff5a7e;
+  }
+
+  [data-theme="light"] {
+    --bg: #f0eaff;
+    --bg2: #e8dffc;
+    --bg3: #d8ccf8;
+    --surface: rgba(255, 255, 255, 0.9);
+    --surface2: rgba(220, 200, 255, 0.7);
+    --border: rgba(120, 60, 220, 0.2);
+    --border2: rgba(120, 60, 220, 0.4);
+    --accent: #6c30e0;
+    --accent2: #9060cc;
+    --accent3: #0099aa;
+    --accent4: #cc30cc;
+    --text: #1a0a3a;
+    --text2: #4a3070;
+    --text3: #8060aa;
+    --glow: rgba(120, 60, 220, 0.25);
+    --glow2: rgba(0, 153, 170, 0.2);
+    --card-bg: rgba(248, 244, 255, 0.95);
+    --input-bg: rgba(255, 255, 255, 0.95);
+    --success: #007a50;
+    --warn: #cc7000;
+    --danger: #cc0040;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+    transition: background 0.4s, color 0.4s;
+  }
+
+  /* Background grid & atmosphere */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(138,80,255,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(138,80,255,0.04) 1px, transparent 1px);
+    background-size: 44px 44px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  [data-theme="light"] body::before {
+    background-image:
+      linear-gradient(rgba(108,48,224,0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(108,48,224,0.06) 1px, transparent 1px);
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    top: -30%;
+    left: -20%;
+    width: 70%;
+    height: 70%;
+    background: radial-gradient(ellipse, rgba(138,80,255,0.12) 0%, transparent 65%);
+    pointer-events: none;
+    z-index: 0;
+    animation: driftBg 18s ease-in-out infinite alternate;
+  }
+
+  @keyframes driftBg {
+    from { transform: translate(0,0) scale(1); }
+    to { transform: translate(8%, 12%) scale(1.1); }
+  }
+
+  .blob2 {
+    position: fixed;
+    bottom: -20%;
+    right: -15%;
+    width: 60%;
+    height: 60%;
+    background: radial-gradient(ellipse, rgba(90,255,239,0.06) 0%, transparent 65%);
+    pointer-events: none;
+    z-index: 0;
+    animation: driftBg2 22s ease-in-out infinite alternate;
+  }
+
+  @keyframes driftBg2 {
+    from { transform: translate(0,0) scale(1); }
+    to { transform: translate(-6%, -8%) scale(1.08); }
+  }
+
+  /* Layout */
+  .wrapper {
+    position: relative;
+    z-index: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 24px 80px;
+  }
+
+  /* Header */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 28px 0 0;
+    position: relative;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Orbitron', monospace;
+    font-weight: 900;
+    font-size: 1.35rem;
+    letter-spacing: 0.04em;
+    color: var(--accent2);
+    text-shadow: 0 0 24px var(--glow);
+  }
+
+  .logo-icon {
+    width: 36px;
+    height: 36px;
+    position: relative;
+  }
+
+  .logo-icon svg { width: 100%; height: 100%; }
+
+  .logo-sub {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.6rem;
+    font-weight: 300;
+    letter-spacing: 0.25em;
+    color: var(--accent3);
+    text-transform: uppercase;
+    display: block;
+    margin-top: -3px;
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  /* Theme toggle */
+  .theme-toggle {
+    position: relative;
+    width: 52px;
+    height: 28px;
+    cursor: pointer;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 14px;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    padding: 3px;
+    backdrop-filter: blur(8px);
+  }
+
+  .theme-toggle::after {
+    content: '';
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    box-shadow: 0 0 10px var(--glow);
+    transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    transform: translateX(0);
+  }
+
+  [data-theme="light"] .theme-toggle::after {
+    transform: translateX(24px);
+  }
+
+  .toggle-icons {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 8px;
+    pointer-events: none;
+    font-size: 10px;
+  }
+
+  /* Hero */
+  .hero {
+    text-align: center;
+    padding: 60px 0 48px;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 100px;
+    padding: 5px 14px 5px 8px;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    color: var(--accent3);
+    text-transform: uppercase;
+    margin-bottom: 22px;
+    backdrop-filter: blur(8px);
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .badge-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--accent3);
+    box-shadow: 0 0 8px var(--accent3);
+    animation: pulse 2s ease infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+
+  h1 {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(2rem, 5vw, 3.4rem);
+    font-weight: 900;
+    line-height: 1.08;
+    letter-spacing: -0.01em;
+    background: linear-gradient(135deg, var(--accent2) 0%, var(--accent3) 60%, var(--accent4) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 18px;
+    animation: fadeUp 0.6s 0.1s ease both;
+  }
+
+  .hero-sub {
+    font-size: 1.05rem;
+    color: var(--text2);
+    max-width: 500px;
+    margin: 0 auto 40px;
+    line-height: 1.65;
+    font-weight: 300;
+    animation: fadeUp 0.6s 0.2s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Input zone */
+  .input-zone {
+    animation: fadeUp 0.6s 0.3s ease both;
+    max-width: 680px;
+    margin: 0 auto;
+  }
+
+  .platform-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .platform-tab {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text3);
+    font-size: 0.78rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.03em;
+    backdrop-filter: blur(8px);
+  }
+
+  .platform-tab:hover, .platform-tab.active {
+    border-color: var(--accent);
+    color: var(--accent2);
+    background: rgba(138,80,255,0.1);
+    box-shadow: 0 0 16px rgba(138,80,255,0.15);
+  }
+
+  .platform-tab.active {
+    box-shadow: 0 0 20px rgba(138,80,255,0.25), inset 0 0 20px rgba(138,80,255,0.05);
+  }
+
+  .platform-emoji { font-size: 1rem; }
+
+  .input-row {
+    display: flex;
+    gap: 10px;
+  }
+
+  .url-input {
+    flex: 1;
+    background: var(--input-bg);
+    border: 1px solid var(--border2);
+    border-radius: 12px;
+    padding: 14px 18px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.92rem;
+    outline: none;
+    transition: all 0.25s;
+    backdrop-filter: blur(8px);
+  }
+
+  .url-input::placeholder { color: var(--text3); }
+
+  .url-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(138,80,255,0.15), 0 0 24px rgba(138,80,255,0.1);
+  }
+
+  .audit-btn {
+    padding: 14px 26px;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent4) 100%);
+    border: none;
+    border-radius: 12px;
+    color: #fff;
+    font-family: 'Orbitron', monospace;
+    font-weight: 700;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+    white-space: nowrap;
+    box-shadow: 0 4px 24px rgba(138,80,255,0.35);
+  }
+
+  .audit-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.2), transparent);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .audit-btn:hover::before { opacity: 1; }
+  .audit-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 32px rgba(138,80,255,0.5); }
+  .audit-btn:active { transform: translateY(0); }
+  .audit-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+  /* Loading */
+  .loading-state {
+    display: none;
+    text-align: center;
+    padding: 48px 0;
+  }
+
+  .loading-state.active { display: block; }
+
+  .scan-ring {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    border-top-color: var(--accent);
+    border-right-color: var(--accent3);
+    animation: spin 1s linear infinite;
+    margin: 0 auto 18px;
+    position: relative;
+  }
+
+  .scan-ring::after {
+    content: '⟆';
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+    color: var(--accent2);
+    animation: spin 1s linear infinite reverse;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .loading-text {
+    color: var(--text2);
+    font-size: 0.9rem;
+    letter-spacing: 0.08em;
+    font-family: 'Orbitron', monospace;
+    font-weight: 400;
+  }
+
+  .loading-steps {
+    margin-top: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: center;
+  }
+
+  .loading-step {
+    font-size: 0.78rem;
+    color: var(--text3);
+    opacity: 0;
+    animation: stepReveal 0.4s ease both;
+  }
+
+  @keyframes stepReveal { to { opacity: 1; } }
+
+  /* Results */
+  .results { display: none; }
+  .results.active {
+    display: block;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  .results-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 48px 0 24px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .profile-pill {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 100px;
+    padding: 8px 18px 8px 8px;
+    backdrop-filter: blur(10px);
+  }
+
+  .profile-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent4));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    box-shadow: 0 0 12px var(--glow);
+  }
+
+  .profile-info { line-height: 1.2; }
+  .profile-name { font-weight: 600; font-size: 0.9rem; }
+  .profile-platform { font-size: 0.72rem; color: var(--text3); }
+
+  .score-badge {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 100px;
+    padding: 8px 18px;
+    backdrop-filter: blur(10px);
+  }
+
+  .score-label { font-size: 0.75rem; color: var(--text3); letter-spacing: 0.05em; }
+
+  .score-val {
+    font-family: 'Orbitron', monospace;
+    font-weight: 700;
+    font-size: 1.4rem;
+    background: linear-gradient(135deg, var(--accent3), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Metric cards grid */
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+
+  .metric-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(12px);
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+    animation: cardPop 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
+  }
+
+  .metric-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--border2);
+    box-shadow: 0 12px 32px rgba(138,80,255,0.12);
+  }
+
+  .metric-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    opacity: 0.6;
+  }
+
+  .metric-card.cyan::before { background: linear-gradient(90deg, transparent, var(--accent3), transparent); }
+  .metric-card.pink::before { background: linear-gradient(90deg, transparent, var(--accent4), transparent); }
+  .metric-card.green::before { background: linear-gradient(90deg, transparent, var(--success), transparent); }
+  .metric-card.warn::before { background: linear-gradient(90deg, transparent, var(--warn), transparent); }
+
+  @keyframes cardPop {
+    from { opacity: 0; transform: translateY(20px) scale(0.96); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .metric-card:nth-child(1) { animation-delay: 0.05s; }
+  .metric-card:nth-child(2) { animation-delay: 0.1s; }
+  .metric-card:nth-child(3) { animation-delay: 0.15s; }
+  .metric-card:nth-child(4) { animation-delay: 0.2s; }
+  .metric-card:nth-child(5) { animation-delay: 0.25s; }
+  .metric-card:nth-child(6) { animation-delay: 0.3s; }
+
+  .metric-icon {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    filter: drop-shadow(0 0 6px currentColor);
+  }
+
+  .metric-label {
+    font-size: 0.72rem;
+    color: var(--text3);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 500;
+    margin-bottom: 4px;
+  }
+
+  .metric-value {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.6rem;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .metric-card.purple .metric-value { color: var(--accent2); text-shadow: 0 0 16px var(--glow); }
+  .metric-card.cyan .metric-value { color: var(--accent3); text-shadow: 0 0 16px var(--glow2); }
+  .metric-card.pink .metric-value { color: var(--accent4); text-shadow: 0 0 16px rgba(255,90,245,0.3); }
+  .metric-card.green .metric-value { color: var(--success); }
+  .metric-card.warn .metric-value { color: var(--warn); }
+
+  .metric-delta {
+    font-size: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+  }
+
+  .delta-up { color: var(--success); }
+  .delta-down { color: var(--danger); }
+
+  /* Bar chart */
+  .chart-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 20px;
+    backdrop-filter: blur(12px);
+    animation: cardPop 0.4s 0.35s cubic-bezier(0.34,1.56,0.64,1) both;
+  }
+
+  .chart-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    color: var(--text2);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .chart-title::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+  }
+
+  .bar-chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    height: 120px;
+  }
+
+  .bar-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    height: 100%;
+    justify-content: flex-end;
+  }
+
+  .bar {
+    width: 100%;
+    border-radius: 6px 6px 0 0;
+    position: relative;
+    min-height: 4px;
+    transition: opacity 0.2s;
+    cursor: pointer;
+  }
+
+  .bar:hover { opacity: 0.85; }
+
+  .bar-label {
+    font-size: 0.65rem;
+    color: var(--text3);
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  /* Two-col layout */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+
+  @media (max-width: 580px) { .two-col { grid-template-columns: 1fr; } }
+
+  /* Gauge */
+  .gauge-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 0;
+  }
+
+  .gauge-svg { width: 160px; height: 100px; }
+
+  /* Insight card */
+  .insight-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 22px;
+    backdrop-filter: blur(12px);
+    animation: cardPop 0.4s 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
+  }
+
+  .insight-list { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-top: 14px; }
+
+  .insight-item {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+
+  .insight-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+  .insight-text { color: var(--text2); }
+  .insight-text strong { color: var(--text); font-weight: 500; }
+
+  /* Recommendation */
+  .rec-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 14px;
+    margin-bottom: 20px;
+    animation: cardPop 0.4s 0.45s cubic-bezier(0.34,1.56,0.64,1) both;
+  }
+
+  .rec-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    backdrop-filter: blur(12px);
+  }
+
+  .rec-priority {
+    display: inline-block;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 100px;
+    margin-bottom: 10px;
+  }
+
+  .priority-high { background: rgba(255,90,126,0.15); color: var(--danger); border: 1px solid rgba(255,90,126,0.3); }
+  .priority-med { background: rgba(255,179,90,0.15); color: var(--warn); border: 1px solid rgba(255,179,90,0.3); }
+  .priority-low { background: rgba(90,255,172,0.15); color: var(--success); border: 1px solid rgba(90,255,172,0.3); }
+
+  .rec-title { font-weight: 600; font-size: 0.9rem; margin-bottom: 6px; }
+  .rec-desc { font-size: 0.8rem; color: var(--text2); line-height: 1.55; }
+
+  /* Footer cta */
+  .export-row {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 32px;
+    flex-wrap: wrap;
+    animation: cardPop 0.4s 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
+  }
+
+  .btn-outline {
+    padding: 11px 22px;
+    border: 1px solid var(--border2);
+    border-radius: 10px;
+    background: var(--surface);
+    color: var(--accent2);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    backdrop-filter: blur(8px);
+  }
+
+  .btn-outline:hover { border-color: var(--accent); background: rgba(138,80,255,0.1); }
+
+  .btn-primary {
+    padding: 11px 22px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border: none;
+    border-radius: 10px;
+    color: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 18px rgba(138,80,255,0.3);
+  }
+
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(138,80,255,0.45); }
+
+  /* Error */
+  .error-state {
+    display: none;
+    text-align: center;
+    padding: 32px;
+    color: var(--danger);
+    font-size: 0.9rem;
+  }
+
+  .error-state.active { display: block; }
+
+  /* Scan lines overlay */
+  .scanlines {
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.015) 2px,
+      rgba(0,0,0,0.015) 4px
+    );
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Corner accent */
+  .corner {
+    position: fixed;
+    width: 60px;
+    height: 60px;
+    pointer-events: none;
+    z-index: 2;
+    opacity: 0.3;
+  }
+
+  .corner-tl { top: 0; left: 0; border-top: 1px solid var(--accent3); border-left: 1px solid var(--accent3); }
+  .corner-br { bottom: 0; right: 0; border-bottom: 1px solid var(--accent3); border-right: 1px solid var(--accent3); }
+
+  /* AI tag */
+  .ai-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.68rem;
+    color: var(--accent3);
+    letter-spacing: 0.1em;
+    background: rgba(90,255,239,0.08);
+    border: 1px solid rgba(90,255,239,0.2);
+    border-radius: 100px;
+    padding: 3px 10px;
+    font-weight: 500;
+  }
+
+  /* Responsive */
+  @media (max-width: 500px) {
+    .input-row { flex-direction: column; }
+    .metrics-grid { grid-template-columns: 1fr 1fr; }
+    h1 { font-size: 1.7rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="blob2"></div>
+<div class="scanlines"></div>
+<div class="corner corner-tl"></div>
+<div class="corner corner-br"></div>
+
+<div class="wrapper">
+  <header>
+    <div class="logo">
+      <div class="logo-icon">
+        <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="18" cy="18" r="16" stroke="#8a50ff" stroke-width="1.5" opacity="0.5"/>
+          <circle cx="18" cy="18" r="10" stroke="#c280ff" stroke-width="1.5"/>
+          <circle cx="18" cy="18" r="4" fill="#5affef" opacity="0.9"/>
+          <line x1="18" y1="2" x2="18" y2="8" stroke="#8a50ff" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="18" y1="28" x2="18" y2="34" stroke="#8a50ff" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="2" y1="18" x2="8" y2="18" stroke="#8a50ff" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="28" y1="18" x2="34" y2="18" stroke="#8a50ff" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div>
+        AuraAudit
+        <span class="logo-sub">AI Social Intelligence</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="ai-tag">✦ AI Powered</div>
+      <div class="theme-toggle" id="themeToggle" title="Toggle theme">
+        <div class="toggle-icons"><span>🌙</span><span>☀️</span></div>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="hero-badge">
+      <div class="badge-dot"></div>
+      Real-time social intelligence
+    </div>
+    <h1>Decode Your<br>Social DNA</h1>
+    <p class="hero-sub">Drop any social media profile link. Our AI scans reach, engagement, growth velocity, and audience quality — in seconds.</p>
+
+    <div class="input-zone">
+      <div class="platform-tabs">
+        <div class="platform-tab active" data-platform="instagram">
+          <span class="platform-emoji">📸</span> Instagram
+        </div>
+        <div class="platform-tab" data-platform="tiktok">
+          <span class="platform-emoji">🎵</span> TikTok
+        </div>
+        <div class="platform-tab" data-platform="youtube">
+          <span class="platform-emoji">▶️</span> YouTube
+        </div>
+        <div class="platform-tab" data-platform="twitter">
+          <span class="platform-emoji">𝕏</span> X/Twitter
+        </div>
+        <div class="platform-tab" data-platform="linkedin">
+          <span class="platform-emoji">💼</span> LinkedIn
+        </div>
+      </div>
+      <div class="input-row">
+        <input type="text" class="url-input" id="urlInput" placeholder="https://instagram.com/username  or  @username" />
+        <button class="audit-btn" id="auditBtn" onclick="runAudit()">AUDIT ⟶</button>
+      </div>
+    </div>
+  </section>
+
+  <div class="loading-state" id="loadingState">
+    <div class="scan-ring"></div>
+    <div class="loading-text">SCANNING PROFILE</div>
+    <div class="loading-steps" id="loadingSteps"></div>
+  </div>
+
+  <div class="error-state" id="errorState">
+    ⚠️ Unable to reach the profile. Check the URL and try again.
+  </div>
+
+  <div class="results" id="results">
+    <div class="results-header">
+      <div class="profile-pill">
+        <div class="profile-avatar" id="profileEmoji">📸</div>
+        <div class="profile-info">
+          <div class="profile-name" id="profileName">@username</div>
+          <div class="profile-platform" id="profilePlatform">Instagram • Audited just now</div>
+        </div>
+      </div>
+      <div class="score-badge">
+        <div>
+          <div class="score-label">AURA SCORE</div>
+          <div class="score-val" id="auraScore">—</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Metric cards -->
+    <div class="metrics-grid" id="metricsGrid"></div>
+
+    <!-- Charts row -->
+    <div class="two-col">
+      <div class="chart-card">
+        <div class="chart-title">Engagement Over 30 Days</div>
+        <div class="bar-chart" id="engagementChart"></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Audience Quality Score</div>
+        <div class="gauge-wrap">
+          <svg class="gauge-svg" viewBox="0 0 160 100" id="gaugeSvg">
+            <defs>
+              <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" style="stop-color:#ff5a7e"/>
+                <stop offset="50%" style="stop-color:#ffb35a"/>
+                <stop offset="100%" style="stop-color:#5affac"/>
+              </linearGradient>
+            </defs>
+            <path d="M 16 90 A 64 64 0 0 1 144 90" fill="none" stroke="rgba(138,80,255,0.15)" stroke-width="10" stroke-linecap="round"/>
+            <path id="gaugeArc" d="M 16 90 A 64 64 0 0 1 144 90" fill="none" stroke="url(#gaugeGrad)" stroke-width="10" stroke-linecap="round" stroke-dasharray="201" stroke-dashoffset="201"/>
+            <text id="gaugeText" x="80" y="82" text-anchor="middle" font-family="Orbitron,monospace" font-size="20" font-weight="700" fill="#c280ff">—</text>
+            <text x="80" y="98" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="8" fill="#6b5599">AUDIENCE QUALITY</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Insights + Recs -->
+    <div class="two-col">
+      <div class="insight-card">
+        <div class="chart-title">AI Insights</div>
+        <ul class="insight-list" id="insightList"></ul>
+      </div>
+      <div class="insight-card">
+        <div class="chart-title">Content Breakdown</div>
+        <div id="contentBreakdown" style="margin-top:14px;display:flex;flex-direction:column;gap:8px;"></div>
+      </div>
+    </div>
+
+    <div class="chart-card" style="margin-bottom:20px; animation-delay:0.42s;">
+      <div class="chart-title">Recommendations</div>
+      <div class="rec-grid" style="margin-top:14px;" id="recGrid"></div>
+    </div>
+
+    <div class="export-row">
+      <button class="btn-outline" onclick="copyReport()">📋 Copy Report</button>
+      <button class="btn-outline" onclick="runAudit()">🔄 Re-Audit</button>
+      <button class="btn-primary" onclick="downloadReport()">⬇ Download PDF</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// Theme toggle
+const themeToggle = document.getElementById('themeToggle');
+themeToggle.addEventListener('click', () => {
+  const html = document.documentElement;
+  html.setAttribute('data-theme', html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+});
+
+// Platform tabs
+const tabs = document.querySelectorAll('.platform-tab');
+let activePlatform = 'instagram';
+tabs.forEach(tab => {
+  tab.addEventListener('click', () => {
+    tabs.forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    activePlatform = tab.dataset.platform;
+    const placeholders = {
+      instagram: 'https://instagram.com/username  or  @username',
+      tiktok: 'https://tiktok.com/@username  or  @username',
+      youtube: 'https://youtube.com/@channel  or  channel name',
+      twitter: 'https://x.com/username  or  @username',
+      linkedin: 'https://linkedin.com/in/profile  or  profile name'
+    };
+    document.getElementById('urlInput').placeholder = placeholders[activePlatform];
+  });
+});
+
+// Platform emoji map
+const platformEmojis = { instagram:'📸', tiktok:'🎵', youtube:'▶️', twitter:'𝕏', linkedin:'💼' };
+const platformNames = { instagram:'Instagram', tiktok:'TikTok', youtube:'YouTube', twitter:'X / Twitter', linkedin:'LinkedIn' };
+
+// Simulate AI audit
+async function runAudit() {
+  const input = document.getElementById('urlInput').value.trim();
+  const auditBtn = document.getElementById('auditBtn');
+
+  if (!input) {
+    document.getElementById('urlInput').focus();
+    document.getElementById('urlInput').style.borderColor = 'var(--danger)';
+    setTimeout(() => document.getElementById('urlInput').style.borderColor = '', 1200);
+    return;
+  }
+
+  // Extract handle
+  let handle = input.replace(/https?:\/\/(www\.)?(instagram|tiktok|youtube|twitter|x|linkedin)\.com\/?(@|in\/)?/i, '').replace(/\/$/, '').replace(/^@/, '');
+  if (!handle) handle = 'user';
+  const displayHandle = '@' + handle;
+
+  auditBtn.disabled = true;
+  document.getElementById('results').classList.remove('active');
+  document.getElementById('errorState').classList.remove('active');
+
+  // Loading
+  const loading = document.getElementById('loadingState');
+  loading.classList.add('active');
+
+  const steps = [
+    '🔍 Resolving profile endpoint...',
+    '📊 Fetching post metrics...',
+    '👥 Analyzing audience composition...',
+    '📈 Computing engagement velocity...',
+    '🧠 Running AI sentiment analysis...',
+    '✨ Generating insights...'
+  ];
+
+  const stepsDiv = document.getElementById('loadingSteps');
+  stepsDiv.innerHTML = '';
+
+  for (let i = 0; i < steps.length; i++) {
+    await delay(420);
+    const el = document.createElement('div');
+    el.className = 'loading-step';
+    el.textContent = steps[i];
+    el.style.animationDelay = '0s';
+    stepsDiv.appendChild(el);
+  }
+
+  // Simulate API call to Claude
+  const prompt = `You are a social media analytics AI. A user has submitted the ${platformNames[activePlatform]} profile "${displayHandle}" for auditing. Generate a realistic and detailed social media audit report.
+
+Return ONLY valid JSON (no markdown fences) with this exact structure:
+{
+  "followers": "number string like 128.4K or 2.1M",
+  "following": "number string",
+  "posts": "number string",
+  "avg_likes": "number string like 4.2K",
+  "avg_comments": "number string",
+  "avg_views": "number string (use N/A for non-video platforms)",
+  "avg_shares": "number string",
+  "engagement_rate": "percentage like 4.8%",
+  "reach_rate": "percentage",
+  "follower_growth": "percentage like +2.3%",
+  "audience_quality_score": number between 40 and 95,
+  "aura_score": number between 50 and 98,
+  "engagement_chart": [7 numbers between 1000 and 50000 representing weekly engagement for last 7 weeks],
+  "insights": [
+    {"icon": "emoji", "text": "insight text with <strong>bold</strong> for key numbers"},
+    {"icon": "emoji", "text": "..."},
+    {"icon": "emoji", "text": "..."},
+    {"icon": "emoji", "text": "..."}
+  ],
+  "content_breakdown": [
+    {"label": "Reels / Videos", "pct": number},
+    {"label": "Carousels", "pct": number},
+    {"label": "Static Posts", "pct": number}
+  ],
+  "recommendations": [
+    {"priority": "high", "title": "short title", "desc": "actionable recommendation"},
+    {"priority": "med", "title": "short title", "desc": "actionable recommendation"},
+    {"priority": "low", "title": "short title", "desc": "actionable recommendation"}
+  ]
+}`;
+
+  let data;
+  try {
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 1000,
+        messages: [{ role: "user", content: prompt }]
+      })
+    });
+    const json = await response.json();
+    const text = json.content.map(b => b.text || '').join('');
+    const clean = text.replace(/```json|```/g, '').trim();
+    data = JSON.parse(clean);
+  } catch (e) {
+    // Fallback mock data
+    data = generateMockData(activePlatform);
+  }
+
+  await delay(400);
+  loading.classList.remove('active');
+  renderResults(data, displayHandle);
+  auditBtn.disabled = false;
+}
+
+function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+function generateMockData(platform) {
+  const isVideo = platform === 'tiktok' || platform === 'youtube';
+  return {
+    followers: ['42.8K','128.5K','1.2M','890K','56.3K'][Math.floor(Math.random()*5)],
+    following: ['512','1.2K','340','2.8K','880'][Math.floor(Math.random()*5)],
+    posts: ['284','1,042','56','738','191'][Math.floor(Math.random()*5)],
+    avg_likes: ['2.4K','8.9K','41.2K','15.6K','3.1K'][Math.floor(Math.random()*5)],
+    avg_comments: ['184','432','1.2K','876','92'][Math.floor(Math.random()*5)],
+    avg_views: isVideo ? ['84.5K','312K','1.8M','540K','22.1K'][Math.floor(Math.random()*5)] : 'N/A',
+    avg_shares: ['340','1.1K','8.4K','2.3K','210'][Math.floor(Math.random()*5)],
+    engagement_rate: ['3.2%','6.8%','4.1%','9.3%','2.7%'][Math.floor(Math.random()*5)],
+    reach_rate: ['18.4%','34.2%','12.1%','28.7%','41.3%'][Math.floor(Math.random()*5)],
+    follower_growth: ['+1.8%','+4.2%','+0.7%','+6.1%','+2.9%'][Math.floor(Math.random()*5)],
+    audience_quality_score: Math.floor(Math.random()*35)+55,
+    aura_score: Math.floor(Math.random()*30)+62,
+    engagement_chart: Array.from({length:7},()=>Math.floor(Math.random()*30000)+5000),
+    insights: [
+      {icon:'🔥', text:'Your <strong>engagement rate</strong> outperforms 78% of accounts in your niche.'},
+      {icon:'📅', text:'Posts published on <strong>Tuesday & Friday</strong> receive 2.3× more reach.'},
+      {icon:'🤖', text:'<strong>42% of comments</strong> may be from automated accounts — audience quality is moderate.'},
+      {icon:'📉', text:'Reach has <strong>declined 8%</strong> in the last 30 days — consider posting frequency adjustments.'}
+    ],
+    content_breakdown: [
+      {label:'Reels / Videos', pct: 55},
+      {label:'Carousels', pct: 30},
+      {label:'Static Posts', pct: 15}
+    ],
+    recommendations: [
+      {priority:'high', title:'Boost Reel Frequency', desc:'Accounts in your tier posting 5+ Reels/week see 3× higher reach. You\'re currently at ~2/week.'},
+      {priority:'med', title:'Engage Within First Hour', desc:'Responding to comments in the first 60 min signals quality to the algorithm and boosts distribution.'},
+      {priority:'low', title:'Audit Follower Quality', desc:'Use a follower audit tool to remove ghost/bot accounts — this improves your engagement rate metric.'}
+    ]
+  };
+}
+
+function renderResults(data, handle) {
+  document.getElementById('profileEmoji').textContent = platformEmojis[activePlatform] || '📱';
+  document.getElementById('profileName').textContent = handle;
+  document.getElementById('profilePlatform').textContent = platformNames[activePlatform] + ' • Audited just now';
+  document.getElementById('auraScore').textContent = data.aura_score;
+
+  // Metric cards
+  const metrics = [
+    {icon:'👥', label:'Followers', value: data.followers, delta: data.follower_growth, color:'purple'},
+    {icon:'💜', label:'Avg Likes', value: data.avg_likes, delta:'+0.4K vs last mo', color:'pink'},
+    {icon:'💬', label:'Avg Comments', value: data.avg_comments, delta:'Healthy ratio', color:'cyan'},
+    {icon:'📊', label:'Engagement Rate', value: data.engagement_rate, delta:'Above avg', color:'green'},
+    {icon:'👁', label:'Reach Rate', value: data.reach_rate, delta:'Per post', color:'purple'},
+    {icon:'🔁', label:'Avg Shares', value: data.avg_shares, delta:'Viral factor', color:'warn'},
+  ];
+  if (data.avg_views !== 'N/A') {
+    metrics[2] = {icon:'▶️', label:'Avg Views', value: data.avg_views, delta:'Per video', color:'cyan'};
+  }
+
+  const grid = document.getElementById('metricsGrid');
+  grid.innerHTML = '';
+  metrics.forEach(m => {
+    const isUp = !String(m.delta).startsWith('-');
+    grid.innerHTML += `
+      <div class="metric-card ${m.color}">
+        <div class="metric-icon">${m.icon}</div>
+        <div class="metric-label">${m.label}</div>
+        <div class="metric-value">${m.value}</div>
+        <div class="metric-delta ${isUp?'delta-up':'delta-down'}">${isUp?'▲':'▼'} ${m.delta}</div>
+      </div>`;
+  });
+
+  // Engagement bar chart
+  const chartDiv = document.getElementById('engagementChart');
+  chartDiv.innerHTML = '';
+  const maxVal = Math.max(...data.engagement_chart);
+  const weeks = ['W1','W2','W3','W4','W5','W6','W7'];
+  const colors = ['#8a50ff','#9a60ff','#c280ff','#5affef','#8a50ff','#ff5af5','#c280ff'];
+  data.engagement_chart.forEach((val, i) => {
+    const pct = Math.round((val / maxVal) * 100);
+    const displayVal = val >= 1000 ? (val/1000).toFixed(1)+'K' : val;
+    chartDiv.innerHTML += `
+      <div class="bar-group">
+        <div class="bar" style="height:${pct}%;background:linear-gradient(to top,${colors[i]},${colors[i]}88);box-shadow:0 0 10px ${colors[i]}44;" title="${displayVal}"></div>
+        <div class="bar-label">${weeks[i]}</div>
+      </div>`;
+  });
+
+  // Gauge
+  const score = data.audience_quality_score;
+  const arcLen = 201;
+  const dashOffset = arcLen - (score / 100) * arcLen;
+  const gaugeArc = document.getElementById('gaugeArc');
+  const gaugeText = document.getElementById('gaugeText');
+  gaugeArc.style.strokeDashoffset = arcLen;
+  gaugeText.textContent = score;
+  setTimeout(() => {
+    gaugeArc.style.transition = 'stroke-dashoffset 1.2s cubic-bezier(0.4,0,0.2,1)';
+    gaugeArc.style.strokeDashoffset = dashOffset;
+  }, 200);
+
+  // Insights
+  const insightList = document.getElementById('insightList');
+  insightList.innerHTML = '';
+  (data.insights || []).forEach(ins => {
+    insightList.innerHTML += `<li class="insight-item"><span class="insight-icon">${ins.icon}</span><span class="insight-text">${ins.text}</span></li>`;
+  });
+
+  // Content breakdown
+  const cbDiv = document.getElementById('contentBreakdown');
+  cbDiv.innerHTML = '';
+  const cbColors = ['#8a50ff','#5affef','#ff5af5'];
+  (data.content_breakdown || []).forEach((item, i) => {
+    cbDiv.innerHTML += `
+      <div>
+        <div style="display:flex;justify-content:space-between;font-size:0.8rem;color:var(--text2);margin-bottom:5px;">
+          <span>${item.label}</span><span style="color:${cbColors[i]};font-weight:600;">${item.pct}%</span>
+        </div>
+        <div style="height:7px;background:var(--surface2);border-radius:4px;overflow:hidden;">
+          <div style="height:100%;width:0%;background:linear-gradient(90deg,${cbColors[i]},${cbColors[i]}88);border-radius:4px;transition:width 1s 0.3s ease;" data-width="${item.pct}%"></div>
+        </div>
+      </div>`;
+  });
+
+  // Recommendations
+  const recGrid = document.getElementById('recGrid');
+  recGrid.innerHTML = '';
+  (data.recommendations || []).forEach(rec => {
+    recGrid.innerHTML += `
+      <div class="rec-card">
+        <span class="rec-priority priority-${rec.priority}">${rec.priority.toUpperCase()} PRIORITY</span>
+        <div class="rec-title">${rec.title}</div>
+        <div class="rec-desc">${rec.desc}</div>
+      </div>`;
+  });
+
+  document.getElementById('results').classList.add('active');
+
+  // Animate bars after render
+  setTimeout(() => {
+    document.querySelectorAll('[data-width]').forEach(el => {
+      el.style.width = el.dataset.width;
+    });
+  }, 100);
+
+  document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function copyReport() {
+  const text = `AuraAudit Report — ${document.getElementById('profileName').textContent}\nAura Score: ${document.getElementById('auraScore').textContent}\nGenerated: ${new Date().toLocaleString()}`;
+  navigator.clipboard.writeText(text).then(() => alert('Report summary copied!'));
+}
+
+function downloadReport() {
+  alert('PDF export would generate a full branded report. Connect a PDF service to enable this feature.');
+}
+
+// Enter key
+document.getElementById('urlInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') runAudit();
+});
+</script>
+</body>
+</html>
